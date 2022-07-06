@@ -24,7 +24,7 @@ def orchestrator_function(context: df.DurableOrchestrationContext):
         else:
             result3 = yield context.call_activity('drone-sendinfo', data)
         logging.info(result3)
-        return [result3]
+        return result3
     #catch unexpected
     except:
         yield context.call_activity('drone-deletevm', data["vmID"])

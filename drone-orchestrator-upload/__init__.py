@@ -19,8 +19,7 @@ def orchestrator_function(context: df.DurableOrchestrationContext):
     logging.info(data)
     try:
         #Validate parameter input
-        #result0 = yield context.call_activity('drone-validateinput', data)
-        result0 = True
+        result0 = yield context.call_activity('drone-validateinput', data)
         #If path exist, proceed
         if result0 == True:
             result1 = yield context.call_activity('drone-startcompute', data)

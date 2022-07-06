@@ -15,21 +15,21 @@ import glob
 import os
 
 
-def main(name: str) -> str:
+def main(inputPara: str) -> str:
     try:
         logging.info('Python HTTP trigger function processed a request.')
 
-        logging.info("Node ip "+ name[0])
+        logging.info("Node ip "+ inputPara["ipAddress"])
 
         azure_function_name = os.environ["azureFunctionName"]
         file_share = os.environ["fileShare"]
 
-        ipadress=name[0]
-        job_name=name[1]
-        VM_SIZE=name[2]
-        job_date=name[3]
-        job_option=name[4]
-        random_uuid=name[5]
+        ip_address=inputPara["ipAddress"]
+        project_name=inputPara["projectName"]
+        VM_SIZE=inputPara["vmSize"]
+        project_date=inputPara["projectDate"]
+        job_option=inputPara["jobOption"]
+        random_uuid=inputPara["randomUUID"]
 
         #Keyvault connection
         KVUri = os.environ["vaultURI"]
@@ -38,14 +38,14 @@ def main(name: str) -> str:
         functionkey=keyvault_client.get_secret("functionkey").value
 
         #ODM compute node
-        node = Node(ipadress, 3000)
+        node = Node(ip_address, 3000)
 
         #Set up webhook with job id which is sent when job is done
-        webhook = f"https://{azure_function_name}.azurewebsites.net/api/orchestrators/drone-orchestrator-download" + "?code=" + functionkey + "&ipAdress=" + ipadress + "&vmSize=" + VM_SIZE + "&vmID=" + random_uuid
+        webhook = f"https://{azure_function_name}.azurewebsites.net/api/orchestrators/drone-orchestrator-download" + "?code=" + functionkey + "&ipAddress=" + ip_address + "&vmSize=" + VM_SIZE + "&vmID=" + random_uuid
 
         #Create list from images residing in file share
 
-        path = f"/{file_share}/"+job_name+"/"+job_name+"_"+job_date
+        path = f"/{file_share}/"+project_name+"/"+project_name+"_"+project_date
         my_files=glob.glob(path+"/*.JPG")
         my_files=my_files+glob.glob(path+"/*.jpg")
 
@@ -60,18 +60,18 @@ def main(name: str) -> str:
         #Create task on the worker node by specifying parameters. Pictures, resolution, webhook name etc
         logging.info("Uploading images...")
         task = node.create_task(my_files,
-                                options, job_name+"-"+job_date, None, False, webhook)
+                                options, project_name+"-"+project_date, None, False, webhook)
 
         #Task info and aquire job uuuid
-        logging.info("Task is being processed at: "+ipadress)
+        logging.info("Task is being processed at: "+ip_address)
         logging.info(task.info())
         return "Sucessfully uploaded images!"
 
     except exceptions.NodeConnectionError as e:
         logging.info("Cannot connect: %s" % e)
-        return [False, random_uuid]
+        return False
     except exceptions.NodeResponseError as e:
         logging.info("Error: %s" % e)
-        return [False, random_uuid]
+        return False
     except exceptions as e:
-        return [False, random_uuid]
+        return False

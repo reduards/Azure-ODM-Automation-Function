@@ -10,18 +10,22 @@ import logging
 import os
 from pyodm import Node, exceptions
 
-def main(name: str) -> str:
+def main(inputPara: str) -> str:
     try:
         file_share = os.environ["fileShare"]
         logging.info('Python HTTP trigger function processed a request.')
 
         #Bind values from incoming post request
-        true_uuid = name[0]
-        ip_adress = name[1]
-        project_name = name[2]
+        true_uuid = inputPara["uuid"]
+        ip_address = inputPara["ipAddress"]
+        project_name = inputPara["projectName"]
+
+        logging.info(true_uuid)
+        logging.info(ip_address)
+        logging.info(project_name)
 
         #ODM computing node
-        node = Node(ip_adress, 3000)
+        node = Node(ip_address, 3000)
 
         #Bind task with job id
         task = node.get_task(true_uuid)

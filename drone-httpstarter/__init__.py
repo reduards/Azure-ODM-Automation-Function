@@ -21,15 +21,15 @@ async def main(req: func.HttpRequest, starter: str) -> func.HttpResponse:
         dataDict = {
             "uuid": req_body.get("uuid"),
             "projectName": req_body.get("name"),
-            "ProcessingTimeSeconds": req_body.get("processingTime"),
+            "processingTimeSeconds": req_body.get("processingTime"),
             "imagesCount": req_body.get("imagesCount"),
-            "ipAdress": req_body.get("ipAdress"),
+            "ipAddress": req.params.get("ipAddress"),
             "status": req_body.get("status"),
             "progress": req_body.get("progress"),
             "options": req_body.get("options"),
-            "ipAdress": req.params.get("ipAdress"),
             "vmSize": req.params.get("vmSize"),
-            "vmID": req.params.get("vmID")
+            "vmID": req.params.get("vmID"),
+            "dateCreated": req_body.get("dataCreated")
         }
         
         #uuid = req_body.get('uuid')
@@ -46,7 +46,6 @@ async def main(req: func.HttpRequest, starter: str) -> func.HttpResponse:
 
         #list_of_data=[uuid, ip_adress, name, vm_size, processing_time_seconds, date_created, image_count, job_options,vm_id,job_progress,job_status]
         logging.info("went into if")
-        logging.info(list_of_data)
         instance_id = await client.start_new(req.route_params["functionName"], None, dataDict)
         logging.info(f"Started orchestration with ID = '{instance_id}'.")
         return "Successfully invoked download and delte action!"

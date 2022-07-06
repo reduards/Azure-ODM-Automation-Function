@@ -13,7 +13,7 @@ from azure.identity import DefaultAzureCredential
 import os
 
 
-def main(name: str) -> str:
+def main(inputPara: str) -> str:
     key_vault = os.environ["vaultURI"]
         
     KVUri = key_vault
@@ -21,7 +21,7 @@ def main(name: str) -> str:
     keyvault_client = SecretClient(vault_url=KVUri, credential=credential)
 
     payload={
-        "status": name,
+        "status": inputPara,
     }
     
     url=keyvault_client.get_secret("logicapp-email").value
@@ -30,4 +30,4 @@ def main(name: str) -> str:
     
     logging.info(send_message)
 
-    return name
+    return inputPara

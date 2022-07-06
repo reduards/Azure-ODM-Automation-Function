@@ -13,10 +13,10 @@ import glob
 import os
 
 
-def main(name: str) -> str:
+def main(inputPara: str) -> str:
     file_share = os.environ["fileShare"]
     #Check if path exist
-    path=f"/{file_share}/"+name[0]+"/"+name[0]+"_"+str(name[2])
+    path=f"/{file_share}/"+inputPara["projectName"]+"/"+inputPara["projectName"]+"_"+str(inputPara["projectDate"])
     logging.info(path)
     result0=os.path.isdir(path)
     #Check if path contains images

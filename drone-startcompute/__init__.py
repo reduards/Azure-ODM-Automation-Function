@@ -15,13 +15,10 @@ from azure.identity import DefaultAzureCredential
 from azure.mgmt.resource import SubscriptionClient
 import os
 
-def main(data: dict) -> dict:
+def main(inputPara: str) -> str:
     try:
-        random__uuid = data["randomUUID"]
-        VM_SIZE=data["vmSize"]
-        #random_uuid=name[4]
-        #VM_SIZE = name[1]
-        logging.info(VM_SIZE)
+        random_uuid=inputPara["randomUUID"]
+        VM_SIZE=inputPara["vmSize"]
 
         #Keyvault connection
         KVUri = os.environ["vaultURI"]
@@ -31,8 +28,7 @@ def main(data: dict) -> dict:
         # Retrieve subscription ID from environment variable.
         subscription_client = SubscriptionClient(credential)
         subscription = next(subscription_client.subscriptions.list())
-        #subscription_id = subscription.subscription_id
-        subscription_id ="300b6cba-3620-4f76-b22b-d234300d0106"
+        subscription_id = subscription.subscription_id
 
         logging.info(f"Provisioning a virtual machine...some operations might take a minute or two.")
 
@@ -227,6 +223,8 @@ def main(data: dict) -> dict:
         result = poller.result()  # Blocking till executed
         logging.info(result.value[0].message)  # stdout/stderr
 
-        return [ip_address_result.ip_address, name[0], VM_SIZE, name[2], name[3], random_uuid]
+        inputPara["ipAddress"]=ip_address_result.ip_address
+
+        return inputPara
     except Exception as e:
-        return [False, random_uuid]
+        return False

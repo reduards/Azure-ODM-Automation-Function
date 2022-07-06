@@ -14,7 +14,7 @@ from azure.mgmt.resource import SubscriptionClient
 from pyodm import exceptions
 import os
 
-def main(name: str) -> str:
+def main(inputPara: str) -> str:
     try:
 
         resource_group = os.environ["resourceGroup"]
@@ -31,11 +31,11 @@ def main(name: str) -> str:
         network_client = NetworkManagementClient(credential, subscription_id)
 
         #VM variables
-        nic_name = "node-nic-"+ name
-        vm_name = "node-compute-"+ name
+        nic_name = "node-nic-"+ inputPara
+        vm_name = "node-compute-"+ inputPara
         group_name = resource_group
-        ip_name="node-ip-"+ name
-        disk_name= "node-disk-" + name
+        ip_name="node-ip-"+ inputPara
+        disk_name= "node-disk-" + inputPara
 
         # Delete VM
         logging.info('Deleting VM {}'.format(vm_name)+'...')
@@ -44,10 +44,11 @@ def main(name: str) -> str:
         async_vm_delete.wait()
         net_del_poller = network_client.network_interfaces.begin_delete(group_name, nic_name)
         net_del_poller.wait()
-        ip_del_poller = network_client.public_ip_addresses.begin_delete(group_name, ip_name)
-        ip_del_poller.wait()
         async_disk_delete = compute_client.disks.begin_delete(group_name, disk_name)
         async_disk_delete.wait()
+        ip_del_poller = network_client.public_ip_addresses.begin_delete(group_name, ip_name)
+        ip_del_poller.wait()
+        
         
         done_message="Deleted VM {}".format(vm_name)+" and all belonging components"
         logging.info(done_message)

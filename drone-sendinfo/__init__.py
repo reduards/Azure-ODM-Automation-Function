@@ -13,14 +13,14 @@ from azure.identity import DefaultAzureCredential
 import os
 
 
-def main(name: str) -> str:
+def main(inputPara: str) -> str:
     key_vault = os.environ["vaultURI"]
     
     KVUri = key_vault
     credential = DefaultAzureCredential()
     keyvault_client = SecretClient(vault_url=KVUri, credential=credential)
 
-    vm_size = name[3]
+    vm_size = inputPara["vmSize"]
 
     #calculate cost of vm size from cost api
     vm_size_split=vm_size.split('_')
@@ -32,13 +32,13 @@ def main(name: str) -> str:
     price_seconds = price_hour/3600
 
     #varibles for alert message
-    project_name = name[2]
-    processing_time_seconds = float(name[4]) * 0.001
-    date_created = name[5]
+    project_name = inputPara["projectName"]
+    processing_time_seconds = float(inputPara["processingTimeSeconds"]) * 0.001
+    date_created = inputPara["dateCreated"]
     cost = price_seconds * processing_time_seconds
     cost = str(round(cost, 2))
-    image_count = name[6]
-    job_options = name[7]
+    image_count = inputPara["imagesCount"]
+    job_options = inputPara["options"]
     status = "ODM Drone Job Completed Successfully!"
 
     payload={
