@@ -31,31 +31,11 @@ async def main(req: func.HttpRequest, starter: str) -> func.HttpResponse:
             "vmID": req.params.get("vmID"),
             "dateCreated": req_body.get("dataCreated")
         }
-        
-        #uuid = req_body.get('uuid')
-        #name = req_body.get('name')
-        #processing_time_seconds = req_body.get('processingTime')
-        #date_created = req_body.get('dateCreated')
-        #image_count = req_body.get('imagesCount')
-        #job_status = req_body.get('status')
-        #job_progress = req_body.get('progress')
-        #job_options = req_body.get('options')
-        #ip_adress= req.params.get('ipAdress')
-        #vm_size= req.params.get('vmSize')
-        #vm_id=req.params.get('vmID')
 
-        #list_of_data=[uuid, ip_adress, name, vm_size, processing_time_seconds, date_created, image_count, job_options,vm_id,job_progress,job_status]
-        logging.info("went into if")
         instance_id = await client.start_new(req.route_params["functionName"], None, dataDict)
         logging.info(f"Started orchestration with ID = '{instance_id}'.")
         return "Successfully invoked download and delte action!"
     else:
-        """
-        projectname= req.params.get('projectName')
-        vm_size= req.params.get('vmSize')
-        project_date= req.params.get('projectDate')
-        job_option=req.params.get('jobOption')
-        """
         random_uuid=''.join([random.choice(string.ascii_letters + string.digits) for n in range(32)])
 
         dataDict = {
@@ -65,7 +45,7 @@ async def main(req: func.HttpRequest, starter: str) -> func.HttpResponse:
             "randomUUID": random_uuid,
             "projectDate": req.params.get("projectDate")
         }
-        #list_of_data=[projectname,vm_size, project_date, job_option,random_uuid]
+    
         instance_id = await client.start_new(req.route_params["functionName"], None, dataDict)
         logging.info(f"Started orchestration with ID = '{instance_id}'.")
         return client.create_check_status_response(req, instance_id)
